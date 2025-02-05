@@ -4,13 +4,14 @@ var logger = require('morgan');
 var dotenv = require('dotenv');
 var mongoose = require('mongoose');
 
-const postsRouter = require('./routes/posts');
-
 dotenv.config();
 
 var app = express();
 
+const postsRouter = require('./routes/posts');
+
 const mongoURI = process.env.MONGO_URI;
+//mongoose.set('debug', true);
 mongoose.connect(mongoURI);
 
 app.use(logger('dev'));

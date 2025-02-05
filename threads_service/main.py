@@ -7,6 +7,7 @@ from bson import ObjectId
 from dotenv import load_dotenv
 from os import environ
 import requests
+import uvicorn
 
 load_dotenv()
 
@@ -230,3 +231,6 @@ async def delete_thread(id: str, authorization: Annotated[str, Header()]):
             return {"message": "Successfully deleted thread."}
         else:
             raise HTTPException(status_code=500, detail="Unknown error deleting thread.")
+
+if __name__ == "__main__":
+    uvicorn.run(app, port=int(environ.get("PORT", 8000)))
