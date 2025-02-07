@@ -77,11 +77,19 @@ async def get_section(id: str):
     if not section:
         raise HTTPException(status_code=404, detail="Section not found")
     
+    if section["parent"] is not None:
+        parent_section = await sections_collection.find_one({"_id": section["parent"]})
+        parent_section["id"] = str(parent_section["_id"])
+        del parent_section["_id"]
+        parent_section["createdBy"] = str(parent_section["createdBy"])
+        if parent_section["parent"] is not None:
+            parent_section["parent"] = str(parent_section["parent"])
+    
     section["id"] = str(section["_id"])
     del section["_id"]
     section["createdBy"] = str(section["createdBy"])
     if section["parent"] is not None:
-        section["parent"] = str(section["parent"])
+        section["parent"] = parent_section
     section["subsections"] = await get_subsections(id)
 
     return section
@@ -137,6 +145,8 @@ async def update_section(id: str, update_section: Section, authorization: Annota
         
         update_data = update_section.model_dump()
         update_data["lastModified"] = datetime.now()
+        if update_data["parent"] is not None:
+            update_data["parent"] = ObjectId(update_data["parent"])
         result = await sections_collection.update_one({"_id": ObjectId(id)}, {"$set": update_data})
         if result.acknowledged:
             return {"message": "Successfully updated section."}
@@ -182,10 +192,19 @@ async def get_thread(id: str):
     if not thread:
         raise HTTPException(status_code=404, detail="Thread not found.")
     
+    section = await sections_collection.find_one({"_id": thread["section"]})
+
     thread["id"] = str(thread["_id"])
     del thread["_id"]
     thread["createdBy"] = str(thread["createdBy"])
-    thread["section"] = str(thread["section"])
+
+    section["id"] = str(section["_id"])
+    del section["_id"]
+    section["createdBy"] = str(section["createdBy"])
+    if section["parent"] is not None:
+        section["parent"] = str(section["parent"])
+
+    thread["section"] = section
 
     return thread
 
@@ -239,6 +258,7 @@ async def update_thread(id: str, update_thread: Thread, authorization: Annotated
         
         update_data = update_thread.model_dump()
         update_data["lastModified"] = datetime.now()
+        update_data["section"] = ObjectId(update_data["section"])
         result = await threads_collection.update_one({"_id": ObjectId(id)}, {"$set": update_data})
         if result.acknowledged:
             return {"message": "Successfully updated thread."}

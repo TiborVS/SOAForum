@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react"
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, Link } from "react-router";
 import { formatDateFromDbString } from "../utils";
 import { UserContext } from "../Contexts";
 
@@ -36,7 +36,7 @@ function ThreadPage() {
                 for (const post of resultJson) {
                     const fetchResult = await fetch(import.meta.env.VITE_USER_SERVICE_LOCATION + "/users/" + post.postedBy + "/username");
                     const resultJson = await fetchResult.json();
-                    post.postedBy = resultJson.username;
+                    post.postedByName = resultJson.username;
                 }
                 setPosts(resultJson);
             }
@@ -106,17 +106,30 @@ function ThreadPage() {
             <table>
                 <thead>
                     <tr>
-                        <th colSpan="2"><h3>{thread && thread.title}</h3></th>
+                        <th colSpan="2">
+                            <h3>{thread &&
+                            <>
+                                {thread.section.parent && <Link to={"/section/" + thread.section.parent}>...</Link>} /&nbsp;
+                                <Link to={"/section/" + thread.section.id}>{thread.section.title}</Link> / {thread.title}
+                            </>
+                            }</h3>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     {posts && posts.map((post) => {
                         return <tr key={post._id}>
-                            <td>{post.postedBy}<br />{formatDateFromDbString(post.postedOn)}<hr /></td>
+                            <td>
+                                <Link to={"/user/"+ post.postedBy} >
+                                    {post.postedByName}
+                                </Link>
+                                <br />
+                                {formatDateFromDbString(post.postedOn)}<hr />
+                            </td>
                             <td>
                                 {post.text}
                                 <hr />
-                                {post.postedBy == user.username && 
+                                {user && post.postedByName == user.username && 
                                 <>
                                     <button onClick={() => {
                                         setEditing(true);

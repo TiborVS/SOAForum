@@ -44,17 +44,21 @@ router.get('/:id/username', async (req, res) => {
 });
 
 router.get('/:id', verifyToken, async (req, res) => {
-    if (req.user.userId !== req.params.id && !req.user.isAdmin) {
-        return res.status(403).json({ error: 'Unauthorized' });
-    }
-
     try {
-        const user = await User.findById(req.params.id, '-password');
+        if (req.user.userId !== req.params.id && !req.user.isAdmin) {
+            var user = await User.findById(req.params.id, { password: 0, email: 0});
+        }
+        else {
+            user = await User.findById(req.params.id, {password: 0});
+        }
         if (!user) return res.status(404).json({ error: 'User not found' });
         res.json(user);
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
+    
+
+    
 });
 
 router.post('/', async (req, res) => {

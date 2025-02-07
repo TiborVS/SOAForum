@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import SectionPage from './pages/SectionPage'
 import ThreadPage from './pages/ThreadPage'
+import UserPage from './pages/UserPage'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -19,12 +20,10 @@ createRoot(document.getElementById('root')).render(
           <Route path="thread/:threadId" element={<ThreadPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          {/*
           <Route path="user">
             <Route index element={<UserPage />} />
             <Route path=":userId" element={<UserPage />} />
           </Route>
-          */}
         </Route>
       </Routes>
     </BrowserRouter>
