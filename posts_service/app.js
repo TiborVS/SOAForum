@@ -3,6 +3,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var dotenv = require('dotenv');
 var mongoose = require('mongoose');
+var cors = require('cors');
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ const mongoURI = process.env.MONGO_URI;
 //mongoose.set('debug', true);
 mongoose.connect(mongoURI);
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

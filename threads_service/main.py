@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Header
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Annotated
 from datetime import datetime
@@ -12,6 +13,14 @@ import uvicorn
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 MONGO_URI = environ.get("MONGO_URI", False)
 if not MONGO_URI:
@@ -49,6 +58,18 @@ async def get_subsections(parent_id: str):
         
         subsections.append(subsection)
     return subsections
+
+@app.get("/sections/root")
+async def get_root_sections():
+    sections_cursor = sections_collection.find({"parent": None})
+    sections = []
+    async for section in sections_cursor:
+        section["id"] = str(section["_id"])
+        del section["_id"]
+        section["createdBy"] = str(section["createdBy"])
+        
+        sections.append(section)
+    return sections
 
 @app.get("/sections/{id}")
 async def get_section(id: str):
@@ -167,6 +188,19 @@ async def get_thread(id: str):
     thread["section"] = str(thread["section"])
 
     return thread
+
+@app.get("/threads/section/{id}")
+async def get_threads_from_section(id: str):
+    threads_cursor = threads_collection.find({"section": ObjectId(id)})
+    threads = []
+    async for thread in threads_cursor:
+        thread["id"] = str(thread["_id"])
+        del thread["_id"]
+        thread["createdBy"] = str(thread["createdBy"])
+        thread["section"] = str(thread["section"])
+        threads.append(thread)
+    return threads
+
 
 @app.post("/threads")
 async def create_thread(thread: Thread, authorization: Annotated[str, Header()]):

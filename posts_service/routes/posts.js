@@ -68,7 +68,7 @@ router.post('/', verifyToken, async function (req, res) {
         await post.save();
         return res.status(201).json({message: "Successfully created post.", post: post});
     } catch (error) {
-        return res.status(500).json({error: "Unknown error creating post."});
+        return res.status(500).json({error: "Unknown error creating post.", detail: error.message});
     }
 });
 

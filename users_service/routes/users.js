@@ -33,6 +33,16 @@ router.get('/', verifyToken, async (req, res) => {
     }
 });
 
+router.get('/:id/username', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id, 'username');
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 router.get('/:id', verifyToken, async (req, res) => {
     if (req.user.userId !== req.params.id && !req.user.isAdmin) {
         return res.status(403).json({ error: 'Unauthorized' });
@@ -61,10 +71,16 @@ router.post('/', async (req, res) => {
             isAdmin: false
             },
             process.env.JWT_SECRET,
-            { expiresIn: '24h' }
+            { expiresIn: '7d' }
         );
 
-        res.status(201).json({ id: newUser._id, token: token });
+        res.status(201).json({ token: token, user: {
+            username: newUser.username,
+            id: newUser._id,
+            email: newUser.email,
+            profilePictureId: newUser.profilePictureId,
+            signature: newUser.signature
+        } });
     } catch (error) {
         res.status(500).json({ error: 'Error creating user' });
     }
@@ -124,10 +140,16 @@ router.post('/login', async (req, res) => {
             isAdmin: false
         },
         process.env.JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '7d' }
         );
 
-        res.json({ token: token });
+        res.json({ token: token, user: {
+            username: user.username,
+            id: user._id,
+            email: user.email,
+            profilePictureId: user.profilePictureId,
+            signature: user.signature
+        } });
     } catch (error) {
         res.status(500).json({ error: 'Error logging in' });
     }
