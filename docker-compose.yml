@@ -1,0 +1,55 @@
+name: SOAForum
+
+services:
+  files:
+    image: soa-files
+    build: ./files_service
+    env_file:
+      - ./.env
+      - ./files.env
+    networks:
+      - soa-network
+    ports:
+      - 3002:3000
+    depends_on:
+      - users
+
+  users:
+    image: soa-users
+    build: ./users_service
+    env_file:
+      - ./.env
+      - ./users.env
+    networks:
+      - soa-network
+    ports:
+      - 3000:3000
+
+  threads:
+    image: soa-threads
+    build: ./threads_service
+    env_file:
+      - ./.env
+      - ./threads.env
+    networks:
+      - soa-network
+    ports:
+      - 3003:3000
+    depends_on:
+      - users
+
+  posts:
+    image: soa-posts
+    build: ./posts_service
+    env_file:
+      - ./.env
+      - ./posts.env
+    networks:
+      - soa-network
+    ports:
+      - 3001:3000
+    depends_on:
+      - users
+
+networks:
+  soa-network:

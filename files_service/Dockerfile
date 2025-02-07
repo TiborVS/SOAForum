@@ -9,7 +9,7 @@ COPY models ./models/
 COPY routes ./routes/
 COPY app.js ./
 
-ENV PORT=3002
+ENV PORT=3000
 EXPOSE $PORT
 
 CMD ["npm", "run", "start"]

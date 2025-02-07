@@ -6,7 +6,7 @@ RUN pip install -r requirements.txt
 
 COPY main.py .
 
-ENV PORT=3003
-EXPOSE 3003
+ENV PORT=3000
+EXPOSE $PORT
 
 CMD fastapi run main.py --port $PORT
