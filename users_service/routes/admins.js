@@ -17,26 +17,26 @@ const verifyTokenAdmin = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
-        res.status(403).json({ error: 'Invalid token' });
+        res.status(401).json({ error: 'Invalid token' });
     }
 };
 
 router.get('/', verifyTokenAdmin, async (req, res) => {
     try {
-        const admins = await Admin.find({});
+        const admins = await Admin.find({}, {password: 0});
         res.json(admins);
     } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: error.message });
     }
 });
 
 router.get('/:id', verifyTokenAdmin, async (req, res) => {
     try {
-        const admin = await Admin.findById(req.params.id);
-        if (!admin) return res.status(404).json({ error: 'Admin not found' });
+        const admin = await Admin.findById(req.params.id, {password: 0});
+        if (!admin) return res.status(404).json({ error: 'Admin not found.' });
         res.json(admin);
     } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: error.message});
     }
 });
 
@@ -57,9 +57,16 @@ router.post('/', verifyTokenAdmin, async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        res.status(201).json({ id: newAdmin._id, token: token });
+        res.status(201).json({ token: token,  user: {
+            username: newAdmin.username,
+            _id: newAdmin._id,
+            email: newAdmin.email,
+            profilePictureId: newAdmin.profilePictureId,
+            signature: newAdmin.signature,
+            joined: newAdmin.joined
+        }});
     } catch (error) {
-        res.status(500).json({ error: 'Error creating admin' });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -72,7 +79,7 @@ router.put('/:id', verifyTokenAdmin, async (req, res) => {
         await Admin.findByIdAndUpdate(req.params.id, req.body);
         res.json({ message: 'Admin updated' });
     } catch (error) {
-        res.status(500).json({ error: 'Error updating admin' });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -85,7 +92,7 @@ router.delete('/:id', verifyTokenAdmin, async (req, res) => {
         await Admin.findByIdAndDelete(req.params.id);
         res.json({ message: 'Admin deleted' });
     } catch (error) {
-        res.status(500).json({ error: 'Error deleting admin' });
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -110,7 +117,7 @@ router.post('/login', async (req, res) => {
 
         res.json({ token: token });
     } catch (error) {
-        res.status(500).json({ error: 'Error logging in' });
+        res.status(500).json({ error: error.message });
     }
   });
 

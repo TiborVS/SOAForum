@@ -1,0 +1,1293 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SOA Users Service",
+    "version": "1.0",
+    "description": "A service for managing users of Yet Another Forum."
+  },
+  "tags": [
+    {
+      "name": "users"
+    },
+    {
+      "name": "admins"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Get all users (admin only)",
+        "description": "Returns a list of all users (admin only)",
+        "operationId": "getUsers",
+        "responses": {
+          "200": {
+            "description": "List of all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Action not allowed (not admin)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to perform this action."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "users"
+        ]
+      },
+      "post": {
+        "summary": "Create new user",
+        "description": "Creates a new user with the username, email and password in the request body",
+        "operationId": "postUser",
+        "requestBody": {
+          "description": "Username, email and password for new user",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "NewUser81"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "some.email@example.org"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "super.secret.password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.nZ86hUWPdG43W6HVSGFy6DJnDVOZhx8a73LhQ3gIxY8"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{userId}/username": {
+      "get": {
+        "summary": "Get user's username",
+        "description": "Returns the username of the user with a matching ID",
+        "operationId": "getUsername",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's username",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "679f3ddd44167687b51c34e4"
+                    },
+                    "username": {
+                      "type": "string",
+                      "example": "SomeUser09"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "aplication/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "User not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "summary": "Get user by ID",
+        "description": "Returns the user with the matching ID",
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user to get",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "user-self": {
+                    "summary": "Same user / admin",
+                    "value": {
+                      "_id": "679f3ddd44167687b51c34e4",
+                      "username": "MyUser123",
+                      "email": "my.user@123site.org",
+                      "profilePictureId": "679f3ddd44167687b51c34e4",
+                      "signature": "Hello from Maribor",
+                      "joined": "2025-02-04T13:57:07.831000"
+                    }
+                  },
+                  "other-user": {
+                    "summary": "Other user",
+                    "value": {
+                      "_id": "679f3ddd44167687b51c34e4",
+                      "username": "MyUser123",
+                      "profilePictureId": "679f3ddd44167687b51c34e4",
+                      "signature": "Hello from Maribor",
+                      "joined": "2025-02-04T13:57:07.831000"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "User not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "users"
+        ]
+      },
+      "put": {
+        "summary": "Update user by ID",
+        "description": "Updates the user with the matching ID with data from the request body",
+        "operationId": "putUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user to update",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Data to update the user with",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "User successfully updated."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not allowed to update user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Unauthorized."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "users"
+        ]
+      },
+      "delete": {
+        "summary": "Delete user by ID",
+        "description": "Deletes user with the matching ID",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user to update",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "User successfully deleted."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not allowed to delete user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Unauthorized."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/authenticate": {
+      "post": {
+        "summary": "Authenticate user token",
+        "description": "Authenticates a user's JWT token present in the authorization header",
+        "operationId": "authUser",
+        "responses": {
+          "200": {
+            "description": "Token valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "string",
+                          "example": "67a37c895b9beb61ecf918bd"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "User123"
+                        },
+                        "isAdmin": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "iat": {
+                          "type": "integer",
+                          "example": 1739051387
+                        },
+                        "exp": {
+                          "type": "integer",
+                          "example": 1739656187
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token missing or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "no-token": {
+                    "summary": "No token",
+                    "value": {
+                      "error": "No token provided"
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/login": {
+      "post": {
+        "summary": "Log in user",
+        "description": "Logs in user with provided credentials, returning a JWT token",
+        "operationId": "loginUser",
+        "requestBody": {
+          "description": "Email and password to log in with",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "my.user@123site.org"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "my.password.123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.nZ86hUWPdG43W6HVSGFy6DJnDVOZhx8a73LhQ3gIxY8"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid credentials"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "User not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/admins": {
+      "get": {
+        "summary": "Get all admins",
+        "description": "Returns a list of all administrators",
+        "operationId": "getAdmins",
+        "responses": {
+          "200": {
+            "description": "List of all admins",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "no-token": {
+                    "summary": "No token",
+                    "value": {
+                      "error": "Access denied"
+                    }
+                  },
+                  "not-admin": {
+                    "summary": "Not admin",
+                    "value": {
+                      "error": "Access denied."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Server error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "admins"
+        ]
+      },
+      "post": {
+        "summary": "Create new admin",
+        "description": "Creates a new admin with the username, email and password in the request body",
+        "operationId": "postAdmin",
+        "requestBody": {
+          "description": "Username, email and password for new admin",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "NewAdmin02"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "some.email@example.org"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "super.secret.password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.nZ86hUWPdG43W6HVSGFy6DJnDVOZhx8a73LhQ3gIxY8"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "no-token": {
+                    "summary": "No token",
+                    "value": {
+                      "error": "Access denied"
+                    }
+                  },
+                  "not-admin": {
+                    "summary": "Not admin",
+                    "value": {
+                      "error": "Access denied."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "admins"
+        ]
+      }
+    },
+    "/admins/{adminId}": {
+      "get": {
+        "summary": "Get admin by ID",
+        "description": "Returns the admin with the matching ID",
+        "operationId": "getAdmin",
+        "parameters": [
+          {
+            "name": "adminId",
+            "in": "path",
+            "description": "ID of the admin to get",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "no-token": {
+                    "summary": "No token",
+                    "value": {
+                      "error": "Access denied"
+                    }
+                  },
+                  "not-admin": {
+                    "summary": "Not admin",
+                    "value": {
+                      "error": "Access denied."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Admin not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Admin not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "admins"
+        ]
+      },
+      "put": {
+        "summary": "Update admin by ID",
+        "description": "Updates the admin with the matching ID with data from the request body",
+        "operationId": "putAdmin",
+        "parameters": [
+          {
+            "name": "adminId",
+            "in": "path",
+            "description": "ID of the admin to update",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Data to update the admin with",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Admin updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Admin updated"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "no-token": {
+                    "summary": "No token",
+                    "value": {
+                      "error": "Access denied"
+                    }
+                  },
+                  "not-admin": {
+                    "summary": "Not admin",
+                    "value": {
+                      "error": "Access denied."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not allowed to update admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "admins"
+        ]
+      },
+      "delete": {
+        "summary": "Delete admin by ID",
+        "description": "Deletes admin with the matching ID",
+        "operationId": "deleteAdmin",
+        "parameters": [
+          {
+            "name": "adminId",
+            "in": "path",
+            "description": "ID of the admin to update",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Admin deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Admin deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "no-token": {
+                    "summary": "No token",
+                    "value": {
+                      "error": "Access denied"
+                    }
+                  },
+                  "not-admin": {
+                    "summary": "Not admin",
+                    "value": {
+                      "error": "Access denied."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not allowed to delete admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "admins"
+        ]
+      }
+    },
+    "/admins/login": {
+      "post": {
+        "summary": "Log in admin",
+        "description": "Logs in admin with provided credentials, returning a JWT token",
+        "operationId": "loginAdmin",
+        "requestBody": {
+          "description": "Email and password to log in with",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "my.admin@forum.org"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "strong.password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MD yfQ.nZ86hUWPdG43W6HVSGFy6DJnDVOZhx8a73LhQ3gIxY8"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid credentials"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Admin not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Admin not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "admins"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "readOnly": true,
+            "example": "679f3ddd44167687b51c34e4"
+          },
+          "username": {
+            "type": "string",
+            "example": "MyUser123"
+          },
+          "email": {
+            "type": "string",
+            "example": "my.user@123site.org"
+          },
+          "profilePictureId": {
+            "type": "string",
+            "default": "679f3ddd44167687b51c34e4"
+          },
+          "signature": {
+            "type": "string",
+            "example": "Hello from Maribor"
+          },
+          "joined": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2025-02-04T13:57:07.831000"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "message text here"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "error message"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

@@ -4,6 +4,8 @@ var logger = require('morgan');
 var dotenv = require('dotenv');
 var mongoose = require('mongoose');
 var cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const openApiDocument = require('./openapi.json');
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 app.use('/users', usersRouter);
 app.use('/admins', adminsRouter);
