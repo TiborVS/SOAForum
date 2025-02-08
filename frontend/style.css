@@ -1,0 +1,235 @@
+* {
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+* {
+    margin: 0px;
+}
+
+h1, h2, h3, th {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+h1 {
+    text-align: center;
+    background-color: rgb(82, 82, 82);
+    color: rgb(210, 210, 210);
+    padding: 20px;
+}
+
+nav {
+    width: 18%;
+    margin: auto;
+    margin-top: 1%;
+    margin-bottom: 3%;
+}
+
+.navlink {
+    margin: 10px;
+    text-decoration: none;
+    font-family: courier new;
+    font-weight: bolder; 
+    color: rgb(76, 76, 76);
+}
+
+table {
+    margin: auto;
+    margin-top: 2%;
+}
+
+th {
+    padding-top: 1%;
+    padding-bottom: 2%;
+}
+
+#login, #register {
+    width: 30%;
+    margin: auto;
+}
+
+.loginlabel, .registerlabel {
+    margin-right: 10%;
+    margin-bottom: 3%;
+}
+
+#registerusername {
+    margin-right: 8.5%;
+}
+
+#loginlabelup, #registerlabelup {
+    margin-right: 16%;
+}
+
+#loginbutton, #registerbutton {
+    margin-left: 38%;
+    margin-top: 5%;
+    padding: 5px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+button {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    background-color: rgb(130, 130, 130); 
+    color: rgb(247, 247, 247);
+    border-radius: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 5%;
+}
+
+#userposts {
+    margin-top: 5%;
+    font-size:0.9rem;
+    margin-right: 10%;
+    margin-left: 10%;
+}
+
+#userposts, #joinedon, .loginlabel, .registerlabel, .hometitlelabel, .hometitleinput, td, textarea {
+    letter-spacing: 1.1px;
+}
+
+/* .hometitlelabel {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+ */
+#userName, #joinedon {
+    text-align: center;
+}
+
+#userimage {
+    margin: auto;
+    width: 128px;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+#userposts {
+    margin-bottom: 10%;
+}
+
+#userposts td {
+    padding-bottom: 20px;
+}
+
+.userpostedthread {
+    text-align:start;
+    padding-left: 3px;
+}
+
+.usertabledate {
+    padding-left: 5px;
+    padding-right: 30px;
+}
+
+.usertablethread {
+    padding-right: 30px;
+    padding-bottom: 15px;
+    padding-top: 15px;
+}
+
+.usertablethreadname, .threadnamelink {
+    color: rgb(104, 104, 104);
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+.homethreadname {
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.hometableheader {
+    text-align: left;
+    padding-top: 3%;
+}
+
+
+#hometablediv {
+    column-gap: 20px;
+}
+
+td, th {
+    padding-right: 20px;
+}
+
+#homebottomsection {
+    margin: auto;
+    width: 15%;
+    margin-top: 3%;
+}
+
+.buttoncreatesection, .buttoncreatethread {
+    margin-left: 17%;
+    margin-top: 8%;
+}
+
+.buttoncreatethread {
+    padding-left: 14px;
+    padding-right: 14px;
+    margin-top: 3%;
+}
+
+.hometitleinput {
+    margin-top: 5%;
+}
+
+.homethreadsnav {
+    margin-left: 15%;
+}
+
+.homelink {
+    color: black;
+    font-family: 'Courier New', Courier, monospace;
+
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.threadbutton {
+    margin-top: 1%;
+}
+
+/* table, th, td {
+    border: 1px solid black;
+}
+ */
+#threadtablediv {
+    margin:auto;
+    width: 70%;
+    padding: 50px 20px 5px;
+}
+
+#threadtable td {
+    padding: 10px 10px 25px 30px;
+}
+
+#threadcommentdiv {
+    margin-left: 16%;
+    margin-right: auto;
+    width:70%;
+    margin-bottom: 45px;
+}
+
+.commenttextarea {
+    margin-top: 3%;
+}
+
+#commentbutton {
+    margin-top: 0px;
+    margin-left: 1%;
+    vertical-align:bottom;
+}
+
+td {
+    font-size: 1em;
+    color: rgb(58, 58, 58);
+}
+

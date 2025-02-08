@@ -135,93 +135,105 @@ function SectionPage() {
 
     return(
         <>
-            <h3>{(currentSection && currentSection.parent) &&
-                <>
-                    {currentSection.parent.parent && <Link to={"/section/" + currentSection.parent.parent}>...</Link>} /&nbsp;
-                    <Link to={"/section/" + currentSection.parent.id}>{currentSection.parent.title}</Link> / {currentSection.title}
-                </>
-            }</h3>
-            <h3>{(currentSection && !currentSection.parent) &&
-                <>
-                    <Link to={"/"}>Home</Link> /&nbsp;
-                    {currentSection.title}
-                </>
-                
-            }</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Posted by</th>
-                        <th>Posted on</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-            {sections && sections.map((section) => {
-                return <tr key={section.id}>
-                    <td><Link to={"/section/" + section.id}>{section.title}</Link></td>
-                    <td>{section.createdBy}</td>
-                    <td>{formatDateFromDbString(section.createdAt)}</td>
-                    <td>
-                        {user && section.createdBy == user.username &&
-                            <>
-                                <button onClick={(e) => {editHandler("section", section)}}>Edit</button>
-                                <button onClick={(e) => {deleteHandler("section", section)}}>Delete</button>
-                            </>
-                        }
-                    </td>
-                </tr>
-            })}
-                    <tr>
-                        <td colSpan="4"><hr /></td>
-                    </tr>
-            {threads && threads.map((thread) => {
-                return <tr key={thread.id}>
-                    <td><Link to={"/thread/" + thread.id}>{thread.title}</Link></td>
-                    <td>{thread.createdBy}</td>
-                    <td>{formatDateFromDbString(thread.createdAt)}</td>
-                    <td>
-                        {user && thread.createdBy == user.username &&
-                            <>
-                                <button onClick={(e) => {editHandler("thread", thread)}}>Edit</button>
-                                <button onClick={(e) => {deleteHandler("thread", thread)}}>Delete</button>
-                            </>
-                        }
-                    </td>
-                </tr>
-            })}
-                </tbody>
-            </table>
-            {user &&
-                <form>
-                    <label htmlFor="title">Title</label><br />
-                    <input type="text" name="title" id="title" value={titleInput} onChange={(e) => setTitleInput(e.target.value)}/><br />
-                    {!editing &&
-                        <>
-                            <button onClick={(e) => {
-                                formHandler(e, "section");
-                            }}>
-                                Create section
-                            </button>
-                            {params.sectionId &&
-                                <button onClick={(e) => {
-                                    formHandler(e, "thread");
-                                }}>
-                                    Create thread
-                                </button>
+        <div className="homethreadsnav">
+                <h3>{(currentSection && currentSection.parent) &&
+                    <>
+                        {currentSection.parent.parent && <Link className="homelink" to={"/section/" + currentSection.parent.parent}>...</Link>} /&nbsp;
+                        <Link className="homelink" to={"/section/" + currentSection.parent.id}>{currentSection.parent.title}</Link> / {currentSection.title}
+                    </>
+                }</h3>
+                <h3>{(currentSection && !currentSection.parent) &&
+                    <>
+                        <Link className="homelink" to={"/"}>Home</Link> /&nbsp;
+                        {currentSection.title}
+                    </>
+                    
+                }</h3>
+            </div>
+            <div id="hometablediv">
+                <table id="hometable">
+                    <thead>
+                        <tr>
+                            <th className="hometableheader">Section</th>
+                            <th className="hometableheader">Created by</th>
+                            <th className="hometableheader">Created on</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                {sections && sections.map((section) => {
+                    return <tr key={section.id}>
+                        <td className="homethreadname"><Link className="threadnamelink" to={"/section/" + section.id}>{section.title}</Link></td>
+                        <td>{section.createdBy}</td>
+                        <td>{formatDateFromDbString(section.createdAt)}</td>
+                        <td>
+                            {user && section.createdBy == user.username &&
+                                <>
+                                    <button onClick={(e) => {editHandler("section", section)}}>Edit</button>
+                                    <button onClick={(e) => {deleteHandler("section", section)}}>Delete</button>
+                                </>
                             }
-                        </>
-                    }
-                    {editing &&
-                        <button onClick={(e) => {
-                            formHandler(e, formType);
-                        }}>
-                            Edit {formType}
-                        </button>
-                    }
-                    <p>{formError}</p>
-                </form>
+                        </td>
+                    </tr>
+                })}
+                        <tr>
+                            <td colSpan="4"><hr /></td>
+                        </tr>
+                        <tr>
+                            <th className="hometableheader">Thread</th>
+                            <th className="hometableheader">Posted by</th>
+                            <th className="hometableheader">Posted on</th>
+                            <th></th>
+                        </tr>
+                {threads && threads.map((thread) => {
+                    return <tr key={thread.id}>
+                        <td className="homethreadname"><Link className="threadnamelink" to={"/thread/" + thread.id}>{thread.title}</Link></td>
+                        <td className="homepostedby">{thread.createdBy}</td>
+                        <td>{formatDateFromDbString(thread.createdAt)}</td>
+                        <td>
+                            {user && thread.createdBy == user.username &&
+                                <>
+                                    <button onClick={(e) => {editHandler("thread", thread)}}>Edit</button>
+                                    <button onClick={(e) => {deleteHandler("thread", thread)}}>Delete</button>
+                                </>
+                            }
+                        </td>
+                    </tr>
+                })}
+                    </tbody>
+                </table>
+            </div>
+            {user &&
+                <div id="homebottomsection">
+                    <form id="homecreatesection">
+                        <label className="hometitlelabel" htmlFor="title">Title</label><br />
+                        <input className="hometitleinput" type="text" name="title" id="title" value={titleInput} onChange={(e) => setTitleInput(e.target.value)}/><br />
+                        {!editing &&
+                            <>
+                                <button className="buttoncreatesection" onClick={(e) => {
+                                    formHandler(e, "section");
+                                }}>
+                                    Create section
+                                </button>
+                                {params.sectionId &&
+                                    <button className="buttoncreatethread" onClick={(e) => {
+                                        formHandler(e, "thread");
+                                    }}>
+                                        Create thread
+                                    </button>
+                                }
+                            </>
+                        }
+                        {editing &&
+                            <button onClick={(e) => {
+                                formHandler(e, formType);
+                            }}>
+                                Edit {formType}
+                            </button>
+                        }
+                        <p>{formError}</p>
+                    </form>
+                </div>
             }
         </>
     )

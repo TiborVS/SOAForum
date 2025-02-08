@@ -41,12 +41,12 @@ function LoginPage() {
 
     return(
         <>
-        <form onSubmit={handleForm}>
-            <label htmlFor="email">E-mail</label>
-            <input type="text" name="email" id="email" placeholder="your.email@domain.com" onChange={(e) => setEmail(e.target.value)} /><br />
-            <label htmlFor="password">Password</label>
-            <input type="password" name="password" id="password" placeholder="Your password" onChange={(e) => setPassword(e.target.value)} /><br />
-            <button type="submit">Log in</button>
+        <form id="login" onSubmit={handleForm}>
+            <label className="loginlabel" id="loginlabelup" htmlFor="email">E-mail</label>
+            <input className="loginlabel" type="text" name="email" id="email" placeholder="your.email@domain.com" onChange={(e) => setEmail(e.target.value)} /><br />
+            <label className="loginlabel" htmlFor="password">Password</label>
+            <input className="loginlabel" type="password" name="password" id="password" placeholder="Your password" onChange={(e) => setPassword(e.target.value)} /><br />
+            <button id="loginbutton" type="submit">Log in</button>
         </form>
         <p>{error}</p>
         </>

@@ -45,14 +45,14 @@ function RegisterPage() {
 
     return(
         <>
-        <form onSubmit={handleForm}>
-            <label htmlFor="email">E-mail</label>
-            <input type="text" name="email" id="email" placeholder="your.email@domain.com" onChange={(e) => setEmail(e.target.value)} /><br />
-            <label htmlFor="username">Username</label>
-            <input type="text" name="username" id="username" placeholder="Your public username" onChange={(e) => setUsername(e.target.value)} /><br />
-            <label htmlFor="password">Password</label>
-            <input type="password" name="password" id="password" placeholder="Your password" onChange={(e) => setPassword(e.target.value)} /><br />
-            <button type="submit">Register</button>
+        <form id="register" onSubmit={handleForm}>
+            <label className="registerlabel" id="registerlabelup" htmlFor="email">E-mail</label>
+            <input className="registerlabel" type="text" name="email" id="email" placeholder="your.email@domain.com" onChange={(e) => setEmail(e.target.value)} /><br />
+            <label className="registerlabel" id="registerusername" htmlFor="username">Username</label>
+            <input className="registerlabel" type="text" name="username" id="username" placeholder="Your public username" onChange={(e) => setUsername(e.target.value)} /><br />
+            <label className="registerlabel" htmlFor="password">Password</label>
+            <input className="registerlabel" type="password" name="password" id="password" placeholder="Your password" onChange={(e) => setPassword(e.target.value)} /><br />
+            <button id="registerbutton" type="submit">Register</button>
         </form>
         <p>{error}</p>
         </>

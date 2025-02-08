@@ -26,10 +26,10 @@ function MainLayout() {
             <header>
                 <h1>Yet Another Forum</h1>
                 <nav>
-                    <NavLink to="/" end>Home</NavLink>
-                    {!user && <NavLink to="/login" end>Log in</NavLink>}
-                    {!user && <NavLink to="/register" end>Register</NavLink>}
-                    {user && <NavLink to="/user" end>{user.username}</NavLink>}
+                    <NavLink className="navlink" to="/" end>Home</NavLink>
+                    {!user && <NavLink className="navlink" to="/login" end>Log in</NavLink>}
+                    {!user && <NavLink className="navlink" to="/register" end>Register</NavLink>}
+                    {user && <NavLink className="navlink" to="/user" end>{user.username}</NavLink>}
                     {user && 
                         <button id="logout" onClick={logOut}>Log out</button>
                     }

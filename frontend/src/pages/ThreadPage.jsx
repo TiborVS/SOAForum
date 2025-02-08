@@ -103,61 +103,68 @@ function ThreadPage() {
 
     return (
         <>
-            <table>
-                <thead>
-                    <tr>
-                        <th colSpan="2">
-                            <h3>{thread &&
-                            <>
-                                {thread.section.parent && <Link to={"/section/" + thread.section.parent}>...</Link>} /&nbsp;
-                                <Link to={"/section/" + thread.section.id}>{thread.section.title}</Link> / {thread.title}
-                            </>
-                            }</h3>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {posts && posts.map((post) => {
-                        return <tr key={post._id}>
-                            <td>
-                                <Link to={"/user/"+ post.postedBy} >
-                                    {post.postedByName}
-                                </Link>
-                                <br />
-                                {formatDateFromDbString(post.postedOn)}<hr />
-                            </td>
-                            <td>
-                                {post.text}
-                                <hr />
-                                {user && post.postedByName == user.username && 
-                                <>
-                                    <button onClick={() => {
-                                        setEditing(true);
-                                        setEditingId(post._id);
-                                        setPostText(post.text);
-                                    }}>Edit</button>
-                                    <button onClick={() => {
-                                        deletePost(post._id);
-                                    }}>Delete</button>
-                                </>
+            <div className="homethreadsnav">
+                <h3>
+                    {thread &&
+                        <>
+                            {thread.section.parent && <Link className="homelink" to={"/section/" + thread.section.parent}>...</Link>} /&nbsp;
+                            <Link className="homelink" to={"/section/" + thread.section.id}>{thread.section.title}</Link> / {thread.title}
+                        </>
+                    }
+                </h3>
+            </div>
+            <div id="threadtablediv">
+                <table id="threadtable">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        {posts && posts.map((post) => {
+                            return <tr key={post._id}>
+                                <td>
+                                    <Link className="homelink bold" to={"/user/"+ post.postedBy} >
+                                        {post.postedByName}
+                                    </Link>
+                                    <br />
+                                    {formatDateFromDbString(post.postedOn)}
+                                </td>
+                                <td>
+                                    {post.text}
                                     
-                                }
-                            </td>
-                        </tr>
-                    })}
-                </tbody>
-            </table>
+                                    {user && post.postedByName == user.username && 
+                                    <>
+                                        <br/>
+                                        <button className="threadbutton" onClick={() => {
+                                            setEditing(true);
+                                            setEditingId(post._id);
+                                            setPostText(post.text);
+                                        }}>Edit</button>
+                                        <button className="threadbutton" onClick={() => {
+                                            deletePost(post._id);
+                                        }}>Delete</button>
+                                        
+                                    </>
+                                        
+                                    }
+                                </td>
+                            </tr>
+                        })}
+                    </tbody>
+                </table>
+            </div>
             {user && <>
-                <form onSubmit={postSubmitHandler}>
-                    <textarea name="text" id="text" placeholder="Your thoughts here..." value={postText} onChange={(e) => setPostText(e.target.value)}></textarea>
-                    <button type="submit">{editing ? "Edit" : "Post"}</button>
-                    {editing && <button onClick={() => {
-                        setEditing(false);
-                        setEditingId("");
-                        setPostText("");
-                    }}>Cancel</button>}
-                </form>
-                <p>{error}</p>
+                <div id="threadcommentdiv">
+                    <hr/>
+                    <form onSubmit={postSubmitHandler}>
+                        <textarea rows="5" cols="40" className="commenttextarea" name="text" id="text" placeholder="Your thoughts here..." value={postText} onChange={(e) => setPostText(e.target.value)}></textarea>
+                        <button id="commentbutton" type="submit">{editing ? "Edit" : "Post"}</button>
+                        {editing && <button onClick={() => {
+                            setEditing(false);
+                            setEditingId("");
+                            setPostText("");
+                        }}>Cancel</button>}
+                    </form>
+                    <p>{error}</p>
+                </div>
             </>}
         </>
     )

@@ -54,16 +54,18 @@ function UserPage() {
         <>
         {userInfo &&
             <>
-                <h2>{userInfo.username}</h2>
-                <img src={import.meta.env.VITE_FILE_SERVICE_LOCATION + "/images/" + userInfo.profilePictureId} alt={userInfo.username + "'s profile picture"} width="128" height="128" border="1"/>
-                <p>Joined on {formatDateFromDbString(userInfo.joined)}</p>
+                <h2 id="userName">{userInfo.username}</h2>
+                <div id="userimage">
+                    <img src={import.meta.env.VITE_FILE_SERVICE_LOCATION + "/images/" + userInfo.profilePictureId} alt={userInfo.username + "'s profile picture"} width="128" height="128" border="1"/>
+                </div>
+                <p id="joinedon">Joined on {formatDateFromDbString(userInfo.joined)}</p>
                 {userPosts &&
                     <>
-                        <table>
+                        <table id="userposts">
                             <thead>
                                 <tr>
-                                    <th>Posted</th>
-                                    <th>Thread</th>
+                                    <th className="userpostedthread">Posted</th>
+                                    <th className="userpostedthread">Thread</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -72,10 +74,10 @@ function UserPage() {
                                     return <>
                                         {!post.threadGone &&
                                             <tr key={post._id}>
-                                                <td>{formatDateFromDbString(post.postedOn)}</td>
-                                                <td>
+                                                <td className="usertabledate">{formatDateFromDbString(post.postedOn)}</td>
+                                                <td className="usertablethread">
                                                     {!post.threadGone &&
-                                                        <Link to={"/thread/"+post.thread}>{post.threadTitle}</Link>
+                                                        <Link class="usertablethreadname" to={"/thread/"+post.thread}>{post.threadTitle}</Link>
                                                     }
                                                 </td>
                                                 <td>{post.text}</td>
