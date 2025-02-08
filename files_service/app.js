@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument, {customSiteTitle: "Files Service"}));
 
 app.use('/images', imagesRouter);
 app.use('/text', textRouter);

@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument, {customSiteTitle: "Users Service"}));
 
 app.use('/users', usersRouter);
 app.use('/admins', adminsRouter);
