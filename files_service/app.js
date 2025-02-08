@@ -3,6 +3,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var dotenv = require('dotenv');
 var mongoose = require('mongoose')
+const swaggerUi = require('swagger-ui-express');
+const openApiDocument = require('./openapi.json');
 
 dotenv.config();
 
@@ -18,6 +20,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 app.use('/images', imagesRouter);
 app.use('/text', textRouter);

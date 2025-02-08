@@ -5,6 +5,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY bin ./bin/
+COPY middleware ./middleware/
 COPY models ./models/
 COPY routes ./routes/
 COPY app.js ./

@@ -1,0 +1,785 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SOA Files Service",
+    "version": "1.0",
+    "description": "A service for managing files on Yet Another Forum"
+  },
+  "tags": [
+    {
+      "name": "images"
+    },
+    {
+      "name": "text"
+    }
+  ],
+  "paths": {
+    "/images": {
+      "post": {
+        "summary": "Upload a new image",
+        "description": "Uploads a new image from the request body",
+        "operationId": "postImage",
+        "requestBody": {
+          "description": "An image file uploaded as multipart/form-data",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful image upload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fileId": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "fileId": "679f3ddd44167687b51c34e4"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Image size too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "File size exceeds MongoDB limit (16MB)"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "images"
+        ]
+      }
+    },
+    "/images/{imageId}": {
+      "get": {
+        "summary": "Get image by ID",
+        "description": "Returns image with matching ID, set with appropriate Content-Type",
+        "operationId": "getImage",
+        "parameters": [
+          {
+            "name": "imageId",
+            "in": "path",
+            "description": "ID of the image to get",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned image",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "example": "image bytes"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Image not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "File not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "images"
+        ]
+      },
+      "put": {
+        "summary": "Update image by ID",
+        "description": "Updates image with matching ID using data in request body",
+        "operationId": "putImage",
+        "parameters": [
+          {
+            "name": "imageId",
+            "in": "path",
+            "description": "ID of the image to update",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "An image file uploaded as multipart/form-data",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully updated image."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Image size too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "File size exceeds MongoDB limit (16MB)"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Updating image not allowed (incorrect user)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to edit this image."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Image not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "No image found with given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "images"
+        ]
+      },
+      "delete": {
+        "summary": "Delete image by ID",
+        "description": "Deletes image with matching ID",
+        "operationId": "deleteImage",
+        "parameters": [
+          {
+            "name": "imageId",
+            "in": "path",
+            "description": "ID of the image to update",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully deleted image."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Deleting image not allowed (incorrect user)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to delete this image."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Image not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "No image found with given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "images"
+        ]
+      }
+    },
+    "/text": {
+      "post": {
+        "summary": "Upload a new text file",
+        "description": "Uploads a new text file from the request body",
+        "operationId": "postText",
+        "requestBody": {
+          "description": "A text file uploaded as multipart/form-data",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful file upload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fileId": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "fileId": "679f3ddd44167687b51c34e4"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "File size too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "File size exceeds MongoDB limit (16MB)."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "text"
+        ]
+      }
+    },
+    "/text/{fileId}": {
+      "get": {
+        "summary": "Get text file by ID",
+        "description": "Returns text file with matching ID",
+        "operationId": "getText",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "description": "ID of the file to get",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returned text file",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Hello World!"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "File not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "text"
+        ]
+      },
+      "put": {
+        "summary": "Update text file by ID",
+        "description": "Updates text file with matching ID with data in request body",
+        "operationId": "putText",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "description": "ID of the file to get",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "A text file uploaded as multipart/form-data",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated file",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully updated file."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "File size too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "File size exceeds MongoDB limit (16MB)"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Updating file not allowed (incorrect user)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to edit this file."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "No file found with given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "text"
+        ]
+      },
+      "delete": {
+        "summary": "Delete text file by ID",
+        "description": "Deletes text file with matching ID",
+        "operationId": "deleteText",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "description": "ID of the file to update",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted file",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully deleted file."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Must be logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "not-logged-in": {
+                    "summary": "Not logged in",
+                    "value": {
+                      "error": "You must be logged in to perform this action."
+                    }
+                  },
+                  "invalid-token": {
+                    "summary": "Invalid token",
+                    "value": {
+                      "error": "Invalid authentication token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Deleting file not allowed (incorrect user)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to delete this file."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "No file found with given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "text"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "message text here"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "error message"
+          }
+        }
+      }
+    }
+  }
+}

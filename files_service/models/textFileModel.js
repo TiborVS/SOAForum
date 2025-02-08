@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 const textSchema = new mongoose.Schema({
     filename: String,
     contentType: String,
-    data: Buffer
+    data: Buffer,
+    postedBy: mongoose.Types.ObjectId
 }, { collection: "text" });
 
 const TextFile = mongoose.model('TextFile', textSchema);

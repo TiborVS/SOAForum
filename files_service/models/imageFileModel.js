@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 const imageSchema = new mongoose.Schema({
     filename: String,
     contentType: String,
-    data: Buffer
+    data: Buffer,
+    postedBy: mongoose.Types.ObjectId
 }, { collection: "images" });
 
 const ImageFile = mongoose.model('ImageFile', imageSchema);
