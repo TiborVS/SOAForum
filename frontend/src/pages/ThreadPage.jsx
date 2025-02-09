@@ -37,6 +37,12 @@ function ThreadPage() {
                     const fetchResult = await fetch(import.meta.env.VITE_USER_SERVICE_LOCATION + "/users/" + post.postedBy + "/username");
                     const resultJson = await fetchResult.json();
                     post.postedByName = resultJson.username;
+                    const reactions = parseReactions(post);
+                    post.likes = reactions.likes;
+                    post.dislikes = reactions.dislikes;
+                    post.userLiked = reactions.userLiked;
+                    post.userDisliked = reactions.userDisliked;
+                    post.userReactionId = reactions.userReactionId;
                 }
                 setPosts(resultJson);
             }
@@ -46,6 +52,25 @@ function ThreadPage() {
         }
         fetchData();
     }, [params, newlyPosted]);
+
+    function parseReactions(post) {
+        var likes = 0;
+        var dislikes = 0;
+        var userLiked = false;
+        var userDisliked = false;
+        var userReactionId = "";
+        for (const reaction of post.reactions) {
+            if (reaction.type == "like") likes++;
+            else if (reaction.type == "dislike") dislikes++
+
+            if (reaction.reactedBy == user._id) {
+                userReactionId = reaction._id;
+                if (reaction.type == "like") userLiked = true;
+                else if (reaction.type == "dislike") userDisliked = true;
+            }
+        }
+        return { likes, dislikes, userLiked, userDisliked, userReactionId }
+    }
 
     async function postSubmitHandler(event) {
         event.preventDefault();
@@ -101,6 +126,40 @@ function ThreadPage() {
         }
     }
 
+    async function addReaction(id, type) {
+        const fetchResponse = await fetch(import.meta.env.VITE_POST_SERVICE_LOCATION + "/posts/" + id + "/reactions", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + user.token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                type
+            })
+        });
+        if (!fetchResponse.ok) {
+            alert("Error submitting reaction, try again later.");
+            console.log(await fetchResponse.json());
+            return;
+        }
+        setNewlyPosted(newlyPosted + 1);
+    }
+
+    async function removeReaction(postId, reactionId) {
+        const fetchResponse = await fetch(import.meta.env.VITE_POST_SERVICE_LOCATION + "/posts/" + postId + "/reactions/" + reactionId, {
+            method: "DELETE",
+            "headers": {
+                "Authorization": "Bearer " + user.token
+            }
+        })
+        if (!fetchResponse.ok) {
+            alert("Error removing reaction, try again later.");
+            console.log(await fetchResponse.json());
+            return;
+        }
+        setNewlyPosted(newlyPosted + 1);
+    }
+
     return (
         <>
             <div className="homethreadsnav">
@@ -128,7 +187,28 @@ function ThreadPage() {
                                     {formatDateFromDbString(post.postedOn)}
                                 </td>
                                 <td>
-                                    {post.text}
+                                    {post.text} <br />
+                                    Likes: {post.likes} Dislikes: {post.dislikes}
+                                    {user && post.postedByName != user.username &&
+                                    <>
+                                        <br/>
+                                        {!post.userLiked &&
+                                            <button className="threadbutton" onClick={() => {
+                                                addReaction(post._id, "like");
+                                            }}>Like</button>
+                                        }
+                                        {!post.userDisliked &&
+                                            <button className="threadbutton" onClick={() => {
+                                                addReaction(post._id, "dislike");
+                                            }}>Dislike</button>
+                                        }
+                                        {(post.userLiked || post.userDisliked) &&
+                                            <button className="threadbutton" onClick={() => {
+                                                removeReaction(post._id, post.userReactionId);
+                                            }}>Unreact</button>
+                                        }
+                                    </>
+                                    }
                                     
                                     {user && post.postedByName == user.username && 
                                     <>

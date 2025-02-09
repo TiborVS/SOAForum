@@ -454,6 +454,30 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Reaction already exists, potentially updated type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "examples": {
+                  "same-type": {
+                    "summary": "Same type",
+                    "value": {
+                      "message": "Reaction of same type already present."
+                    }
+                  },
+                  "diff-type": {
+                    "summary": "Different type",
+                    "value": {
+                      "message": "Changed existing reaction type to like"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "201": {
             "description": "Successfully added reaction",
             "content": {

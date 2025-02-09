@@ -13,7 +13,7 @@ async function verifyToken(req, res, next) {
         req.user = responseJson.token;
         next();
     } catch (error) {
-        return res.status(500).json({error: "Unknown error during authentication."});
+        return res.status(500).json({error: error.message});
     }
 };
 

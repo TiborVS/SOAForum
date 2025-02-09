@@ -31,10 +31,30 @@ router.post('/', verifyToken, getPostById, async function (req, res) {
         return res.status(403).json({error: "You cannot react to your own post."});
     }
 
+    var present = false;
+
+    for (const reaction of post.reactions) {
+        if (reaction.reactedBy.toString() == req.user.userId) {
+            if (reaction.type == type) {
+                return res.status(200).json({message: "Reaction of same type already present."});
+            }
+            else {
+                reaction.type = type;
+                present = true;
+            }
+        }
+    }
+
     try {
-        post.reactions.push({type: type, reactedBy: mongoose.Types.ObjectId.createFromHexString(req.user.userId)});
-        await post.save();
-        return res.status(201).json({message: "Successfully added reaction."})
+        if (!present) {
+            post.reactions.push({type: type, reactedBy: mongoose.Types.ObjectId.createFromHexString(req.user.userId)});
+            await post.save();
+            return res.status(201).json({message: "Successfully added reaction."})
+        }
+        else {
+            await post.save();
+            return res.status(200).json({message: "Changed existing reaction type to " + type});
+        }
     } catch (error) {
         return res.status(500).json({error: error.message});
     }
