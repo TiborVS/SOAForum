@@ -22,7 +22,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -357,7 +357,8 @@ async def create_section(
         section_dict["createdBy"] = ObjectId(token["userId"])
         section_dict["createdAt"] = datetime.now()
         section_dict["lastModified"] = datetime.now()
-        section_dict["parent"] = ObjectId(section_dict["parent"])
+        if section_dict["parent"]:
+            section_dict["parent"] = ObjectId(section_dict["parent"])
 
         db_result = await sections_collection.insert_one(section_dict)
         if db_result.acknowledged:

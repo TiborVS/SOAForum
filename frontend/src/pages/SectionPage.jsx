@@ -83,7 +83,7 @@ function SectionPage() {
         }
         else if (type == "section") {
             fetchUrl = import.meta.env.VITE_THREAD_SERVICE_LOCATION + "/sections/";
-            data = { title: titleInput, parent: currentSection.id }
+            data = { title: titleInput, parent: (params.sectionId ? currentSection.id : null)}
             if (editing) {
                 fetchUrl += editingId;
                 method = "PUT";
@@ -179,12 +179,14 @@ function SectionPage() {
                         <tr>
                             <td colSpan="4"><hr /></td>
                         </tr>
+                        {threads.length > 1 &&
                         <tr>
                             <th className="hometableheader">Thread</th>
                             <th className="hometableheader">Posted by</th>
                             <th className="hometableheader">Posted on</th>
                             <th></th>
                         </tr>
+                        }
                 {threads && threads.map((thread) => {
                     return <tr key={thread.id}>
                         <td className="homethreadname"><Link className="threadnamelink" to={"/thread/" + thread.id}>{thread.title}</Link></td>

@@ -50,6 +50,19 @@ services:
       - 3001:3000
     depends_on:
       - users
+  
+  frontend:
+    image: soa-frontend
+    build: ./frontend
+    environment:
+      PORT: 3000
+    ports: 
+      - 4000:3000
+    depends_on:
+      - users
+      - posts
+      - threads
+      - files
 
 networks:
   soa-network:
