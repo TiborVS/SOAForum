@@ -9,6 +9,7 @@ COPY middleware ./middleware/
 COPY models ./models/
 COPY routes ./routes/
 COPY app.js ./
+COPY openapi.json ./
 
 ENV PORT=3000
 EXPOSE $PORT
