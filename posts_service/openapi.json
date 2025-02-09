@@ -41,10 +41,10 @@
           }
         ],
         "summary": "Create new post",
-        "description": "Creates a new post in the thread given in the request body and with the text provided in the request body. User must be logged in.",
+        "description": "Creates a new post in the thread given in the request body and with the text provided in the request body. User must be logged in. May optionally add an attachment to the post.",
         "operationId": "postPost",
         "requestBody": {
-          "description": "Post text and target thread",
+          "description": "Post text, target thread, optionally attachment",
           "required": true,
           "content": {
             "application/json": {
@@ -58,12 +58,59 @@
                   "thread": {
                     "type": "string",
                     "example": "679f3ddd44167687b51c34e4"
+                  },
+                  "attachment": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "id",
+                      "fileType"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "image.png"
+                      },
+                      "id": {
+                        "type": "string",
+                        "example": "679f3ddd44167687b51c34e4"
+                      },
+                      "fileType": {
+                        "type": "string",
+                        "enum": [
+                          "text",
+                          "image"
+                        ],
+                        "example": "image"
+                      }
+                    }
                   }
                 },
                 "required": [
                   "text",
                   "thread"
                 ]
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic post",
+                  "value": {
+                    "text": "Hello world!",
+                    "thread": "679f3ddd44167687b51c34e4"
+                  }
+                },
+                "attachment": {
+                  "summary": "With attachment",
+                  "value": {
+                    "text": "Look at my cat :)",
+                    "thread": "679f3ddd44167687b51c34e4",
+                    "attachment": {
+                      "name": "spela.jpg",
+                      "id": "679f3ddd44167687b51c34e4",
+                      "fileType": "image"
+                    }
+                  }
+                }
               }
             }
           }
@@ -771,6 +818,15 @@
     "schemas": {
       "Post": {
         "type": "object",
+        "required": [
+          "_id",
+          "text",
+          "thread",
+          "postedBy",
+          "postedOn",
+          "lastModified",
+          "reactions"
+        ],
         "properties": {
           "_id": {
             "type": "string",
@@ -806,12 +862,31 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Reaction"
+            },
+            "readOnly": true
+          },
+          "attachment": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "my_image.png"
+              },
+              "id": {
+                "type": "string",
+                "example": "679f3ddd44167687b51c34e4"
+              }
             }
           }
         }
       },
       "Reaction": {
         "type": "object",
+        "required": [
+          "_id",
+          "type",
+          "reactedBy"
+        ],
         "properties": {
           "_id": {
             "type": "string",

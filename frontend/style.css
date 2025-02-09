@@ -89,7 +89,7 @@ button {
     margin-left: 10%;
 }
 
-#userposts, #joinedon, .loginlabel, .registerlabel, .hometitlelabel, .hometitleinput, td, textarea {
+#userposts, #joinedon, .loginlabel, .registerlabel, .hometitlelabel, .hometitleinput, td, textarea, .changepic {
     letter-spacing: 1.1px;
 }
 
@@ -107,6 +107,18 @@ button {
     width: 128px;
     margin-top: 1%;
     margin-bottom: 1%;
+}
+
+.changepictureform {
+    margin: auto;
+    width: auto;
+    text-align: center;
+    padding-bottom: 2%;
+    line-height: 2em;
+}
+
+.changepictureform button {
+    margin-top: 0;
 }
 
 #userposts {
@@ -194,7 +206,7 @@ td, th {
 }
 
 .threadbutton {
-    margin-top: 1%;
+    margin-top: 0%;
 }
 
 /* table, th, td {
@@ -220,11 +232,12 @@ td, th {
 
 .commenttextarea {
     margin-top: 3%;
+    margin-bottom: 0.8%;
 }
 
 #commentbutton {
     margin-top: 0px;
-    margin-left: 1%;
+    margin-left: 0%;
     vertical-align:bottom;
 }
 
@@ -233,3 +246,24 @@ td {
     color: rgb(58, 58, 58);
 }
 
+
+
+.likedislike {
+    margin-bottom: 1%;
+    
+}
+
+.attachmentcss {
+    margin-top: 2%;
+    margin-left: 2%;
+    color:rgb(113, 113, 113);
+}
+
+.posttextcss {
+    margin-bottom: 4px;
+    
+}
+
+/* .commenttextarea {
+    margin-right: 1%;
+} */

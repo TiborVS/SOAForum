@@ -105,11 +105,15 @@ function UserPage() {
                 <div id="userimage">
                     <img src={import.meta.env.VITE_FILE_SERVICE_LOCATION + "/images/" + userInfo.profilePictureId} alt={userInfo.username + "'s profile picture"} width="128" height="128" border="1"/>
                 </div>
-                <form action={handleFormSubmit}>
-                    <label htmlFor="file">Change profile picture</label>
-                    <input type="file" name="file" id="file" />
-                    <button type="submit">Upload</button>
-                </form>
+                { userInfo.username == user.username &&
+                    <div className="changepictureform">
+                        <form action={handleFormSubmit}>
+                            <label className="changepic" htmlFor="file">Change profile picture</label> <br />
+                            <input type="file" name="file" id="file" /> <br />
+                            <button type="submit">Upload</button>
+                        </form>
+                    </div>
+                }
                 <p>{formError}</p>
                 <p id="joinedon">Joined on {formatDateFromDbString(userInfo.joined)}</p>
                 {userPosts &&

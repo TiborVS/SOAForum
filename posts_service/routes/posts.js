@@ -54,6 +54,7 @@ router.get('/:postId', async function (req, res) {
 router.post('/', verifyToken, async function (req, res) {
     const text = req.body.text;
     const thread = req.body.thread;
+    const attachment = req.body.attachment;
     if (!text) {
         return res.status(400).json({error: "Post must contain text."});
     }
@@ -64,7 +65,13 @@ router.post('/', verifyToken, async function (req, res) {
         const response = await fetch(threadServiceLocation + "/threads/" + thread);
         if (response.status == 404) return res.status(404).json({error: "Thread doesn't exist."});
         else if (!response.ok) return res.status(500).json({error: "Unknown error getting thread info, threads service returned status " + response.status});
-        const post = new Post({ text, thread, postedBy: ObjectId.createFromHexString(req.user.userId)});
+        if (attachment) {
+            var postData = { text, thread, postedBy: ObjectId.createFromHexString(req.user.userId), attachment: { name: attachment.name, id: ObjectId.createFromHexString(attachment.id), fileType: attachment.fileType}}
+        }
+        else {
+            postData = { text, thread, postedBy: ObjectId.createFromHexString(req.user.userId)}
+        }
+        const post = new Post(postData);
         await post.save();
         return res.status(201).json({message: "Successfully created post."});
     } catch (error) {

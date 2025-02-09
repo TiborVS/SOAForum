@@ -72,13 +72,45 @@ function ThreadPage() {
         return { likes, dislikes, userLiked, userDisliked, userReactionId }
     }
 
-    async function postSubmitHandler(event) {
-        event.preventDefault();
+    async function postSubmitHandler(formData) {
+        setError("");
+        const file = formData.get("file");
         if (postText.trim().length < 1) {
             setError("Post text cannot be empty!")
+            return;
         }
-        else if (!editing) {
-            const data = { text: postText, thread: params.threadId }
+        if (!editing) {
+            if (file) {
+                if (file.type == "text/plain") {
+                    var endpoint = "/text/"
+                    var fileType = "text"
+                }
+                else if (file.type == "image/png" || file.type == "image/jpg" || file.type == "image/jpeg") {
+                    endpoint = "/images/"
+                    fileType = "image"
+                }
+                else {
+                    setError("Invalid file type!");
+                    return;
+                }
+                const response = await fetch(import.meta.env.VITE_FILE_SERVICE_LOCATION + endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + user.token
+                    },
+                    body: formData
+                })
+                if (!response.ok) {
+                    setError("Error uploading file.");
+                    return;
+                }
+                var responseJson = await response.json();
+                var fileId = responseJson.fileId;
+                var data = { text: postText, thread: params.threadId, attachment: { name: file.name, id: fileId, fileType}};
+            }
+            else {
+                data = { text: postText, thread: params.threadId }
+            }
             const fetchResult = await fetch(import.meta.env.VITE_POST_SERVICE_LOCATION + "/posts", {
                 method: "POST",
                 headers: {
@@ -87,11 +119,12 @@ function ThreadPage() {
                 },
                 body: JSON.stringify(data)
             });
-            if (!fetchResult.ok) setError("Error submitting post.");
-            else {
-                setPostText("");
-                setNewlyPosted(newlyPosted + 1);
+            if (!fetchResult.ok) {
+                setError("Error submitting post.");
+                return;
             }
+            setPostText("");
+            setNewlyPosted(newlyPosted + 1);
         }
         else {
             const data = { text: postText }
@@ -103,13 +136,14 @@ function ThreadPage() {
                 },
                 body: JSON.stringify(data)
             });
-            if (!fetchResult.ok) setError("Error editing post.");
-            else {
-                setPostText("");
-                setEditing(false);
-                setEditingId("");
-                setNewlyPosted(newlyPosted + 1);
+            if (!fetchResult.ok) {
+                setError("Error editing post.");
+                return;
             }
+            setPostText("");
+            setEditing(false);
+            setEditingId("");
+            setNewlyPosted(newlyPosted + 1);
         }
     }
 
@@ -187,11 +221,17 @@ function ThreadPage() {
                                     {formatDateFromDbString(post.postedOn)}
                                 </td>
                                 <td>
-                                    {post.text} <br />
-                                    Likes: {post.likes} Dislikes: {post.dislikes}
+                                    <p className="posttextcss"> {post.text} </p>
+                                    {post.attachment &&
+                                    <>
+                                        <p><a className="attachmentcss" target="_blank" href={import.meta.env.VITE_FILE_SERVICE_LOCATION + "/" + (post.attachment.fileType == "image" ? "images" : "text") + "/" + post.attachment.id}>{post.attachment.name}</a></p>
+                                        <br />
+                                    </>
+                                    }
+                                    <p className="likedislike">Likes: {post.likes} Dislikes: {post.dislikes} </p>
                                     {user && post.postedByName != user.username &&
                                     <>
-                                        <br/>
+                                       
                                         {!post.userLiked &&
                                             <button className="threadbutton" onClick={() => {
                                                 addReaction(post._id, "like");
@@ -212,7 +252,7 @@ function ThreadPage() {
                                     
                                     {user && post.postedByName == user.username && 
                                     <>
-                                        <br/>
+                                      
                                         <button className="threadbutton" onClick={() => {
                                             setEditing(true);
                                             setEditingId(post._id);
@@ -234,8 +274,13 @@ function ThreadPage() {
             {user && <>
                 <div id="threadcommentdiv">
                     <hr/>
-                    <form onSubmit={postSubmitHandler}>
+                    <form action={postSubmitHandler}>
                         <textarea rows="5" cols="40" className="commenttextarea" name="text" id="text" placeholder="Your thoughts here..." value={postText} onChange={(e) => setPostText(e.target.value)}></textarea>
+                        <br/> 
+                        {!editing &&
+                            <input type="file" name="file" id="file" accept="text/plain,image/jpg,image/jpeg,image/png" />
+                        }
+                        <br/> <br/>
                         <button id="commentbutton" type="submit">{editing ? "Edit" : "Post"}</button>
                         {editing && <button onClick={() => {
                             setEditing(false);
