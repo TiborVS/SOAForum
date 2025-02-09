@@ -7,7 +7,7 @@ async function getPostById(req, res, next) {
         req.post = post;
         next();
     } catch (error) {
-        return res.status(500).json({error: "Unknown error getting post."});
+        return res.status(500).json({error: error.message});
     }
 }
 

@@ -9,7 +9,7 @@ async function verifyToken(req, res, next) {
             }
         });
         const responseJson = await response.json();
-        if (responseJson.error) return res.status(401).json({error: "Invalid authorization token."});
+        if (responseJson.error) return res.status(401).json({error: "Invalid authentication token."});
         req.user = responseJson.token;
         next();
     } catch (error) {

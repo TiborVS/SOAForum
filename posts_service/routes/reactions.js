@@ -28,15 +28,15 @@ router.post('/', verifyToken, getPostById, async function (req, res) {
         return res.status(400).json({error: "Reaction can only have type 'like' or 'dislike'."});
     }
     if (req.post.postedBy.toString() == req.user.userId) {
-        return res.status(401).json({error: "You cannot react to your own post."});
+        return res.status(403).json({error: "You cannot react to your own post."});
     }
 
     try {
         post.reactions.push({type: type, reactedBy: mongoose.Types.ObjectId.createFromHexString(req.user.userId)});
         await post.save();
-        return res.status(201).json({message: "Successfully added reaction.", reaction: post.reactions.at(-1)})
+        return res.status(201).json({message: "Successfully added reaction."})
     } catch (error) {
-        return res.status(500).json({error: "Unknown error adding reaction.", detail: error.message});
+        return res.status(500).json({error: error.message});
     }
 });
 
@@ -59,9 +59,9 @@ router.put('/:reactionId', verifyToken, getPostById, async function (req, res) {
     try {
         reaction.type = type;
         await req.post.save();
-        return res.status(200).json({message: "Successfully edited reaction.", reaction: reaction});
+        return res.status(200).json({message: "Successfully edited reaction."});
     } catch (error) {
-        return res.status(500).json({error: "Unknown error editing reaction."});
+        return res.status(500).json({error: error.message});
     }
 });
 
@@ -76,13 +76,13 @@ router.delete('/:reactionId', verifyToken, getPostById, async function (req, res
         }
     });
     if (!found) return res.status(404).json({error: "No reaction found with given id."});
-    if (req.user.userId != reaction.reactedBy.toString() && !req.user.isAdmin) return res.status(401).json({error: "Not authorized to delete this reaction."});
+    if (req.user.userId != reaction.reactedBy.toString() && !req.user.isAdmin) return res.status(403).json({error: "Not authorized to delete this reaction."});
     req.post.reactions.pull(req.params.reactionId);
     try {
         await req.post.save();
-        return res.status(200).json({message: "Successfully deleted reaction.", reaction: reaction});
+        return res.status(200).json({message: "Successfully deleted reaction."});
     } catch (error) {
-        return res.status(500).json({error: "Unknown error deleting reaction."});
+        return res.status(500).json({error: error.message});
     }
 });
 

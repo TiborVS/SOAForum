@@ -19,6 +19,11 @@
         "summary": "Upload a new image",
         "description": "Uploads a new image from the request body",
         "operationId": "postImage",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "description": "An image file uploaded as multipart/form-data",
           "required": true,
@@ -170,6 +175,11 @@
         "summary": "Update image by ID",
         "description": "Updates image with matching ID using data in request body",
         "operationId": "putImage",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "imageId",
@@ -295,6 +305,11 @@
         "summary": "Delete image by ID",
         "description": "Deletes image with matching ID",
         "operationId": "deleteImage",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "imageId",
@@ -392,6 +407,11 @@
         "summary": "Upload a new text file",
         "description": "Uploads a new text file from the request body",
         "operationId": "postText",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "description": "A text file uploaded as multipart/form-data",
           "required": true,
@@ -542,6 +562,11 @@
         "summary": "Update text file by ID",
         "description": "Updates text file with matching ID with data in request body",
         "operationId": "putText",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "fileId",
@@ -667,6 +692,11 @@
         "summary": "Delete text file by ID",
         "description": "Deletes text file with matching ID",
         "operationId": "deleteText",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "fileId",
@@ -779,6 +809,13 @@
             "example": "error message"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

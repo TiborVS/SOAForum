@@ -1,0 +1,900 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SOA Posts Service",
+    "version": "1.0",
+    "description": "A service for managing posts on Yet Another Forum."
+  },
+  "tags": [
+    {
+      "name": "posts"
+    },
+    {
+      "name": "reactions"
+    }
+  ],
+  "paths": {
+    "/posts": {
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Get all posts",
+        "description": "Returns all posts",
+        "operationId": "getPosts",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200PostArray"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create new post",
+        "description": "Creates a new post in the thread given in the request body and with the text provided in the request body. User must be logged in.",
+        "operationId": "postPost",
+        "requestBody": {
+          "description": "Post text and target thread",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "example": "My post text is very fun."
+                  },
+                  "thread": {
+                    "type": "string",
+                    "example": "679f3ddd44167687b51c34e4"
+                  }
+                },
+                "required": [
+                  "text",
+                  "thread"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created post",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully created post."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "no-text": {
+                    "summary": "Empty text",
+                    "value": {
+                      "error": "Post must contain text."
+                    }
+                  },
+                  "no-thread": {
+                    "summary": "Empty thread ID",
+                    "value": {
+                      "error": "Post must be part of a thread."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401NotLoggedIn"
+          },
+          "404": {
+            "description": "Thread doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Thread doesn't exist."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      }
+    },
+    "/posts/thread/{threadId}": {
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Get posts from thread",
+        "description": "Returns array of posts under the given thread",
+        "operationId": "getThreadPosts",
+        "parameters": [
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "ID of thread to get posts from",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200PostArray"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      }
+    },
+    "/posts/user/{userId}": {
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Get posts from user",
+        "description": "Returns array of posts created by the given user",
+        "operationId": "getUserPosts",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of user to get posts from",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "679f3ddd44167687b51c34e4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200PostArray"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      }
+    },
+    "/posts/{postId}": {
+      "parameters": [
+        {
+          "name": "postId",
+          "in": "path",
+          "description": "ID of the target post",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "679f3ddd44167687b51c34e4"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Get post by ID",
+        "description": "Returns the post with the matching ID",
+        "operationId": "getPost",
+        "responses": {
+          "200": {
+            "description": "A post object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "No post found with given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Update post by ID",
+        "description": "Updates the post with the matching ID with new text from the request body",
+        "operationId": "putPost",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "New text to update the post with",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "example": "New, better (hopefully) post text!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully edited post."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Edit request must contain text."
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401NotLoggedIn"
+          },
+          "403": {
+            "description": "Not allowed to update post",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to edit this post."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "No post found with given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Delete post by ID",
+        "description": "Deletes the post with the matching ID",
+        "operationId": "deletePost",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully deleted post."
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401NotLoggedIn"
+          },
+          "403": {
+            "description": "Not allowed to delete post",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to delete this post."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "No post found with given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      }
+    },
+    "/posts/{postId}/reactions": {
+      "parameters": [
+        {
+          "name": "postId",
+          "in": "path",
+          "description": "ID of the target post",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "679f3ddd44167687b51c34e4"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "reactions"
+        ],
+        "summary": "Get all reactions to post",
+        "description": "Returns an array of all reactions to the post identified by the provided ID",
+        "operationId": "getReactions",
+        "responses": {
+          "200": {
+            "description": "A list of reactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reaction"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404PostNotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reactions"
+        ],
+        "summary": "Add reaction to post",
+        "description": "Adds a reaction to the post with the matching ID",
+        "operationId": "postReaction",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The type of reaction to add",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reaction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully added reaction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully added reaction."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Reaction can only have type 'like' or 'dislike'."
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401NotLoggedIn"
+          },
+          "403": {
+            "description": "Not allowed to react to own post",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "You cannot react to your own post."
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404PostNotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      }
+    },
+    "/posts/{postId}/reactions/{reactionId}": {
+      "parameters": [
+        {
+          "name": "postId",
+          "in": "path",
+          "description": "ID of the post with the target reaction",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "679f3ddd44167687b51c34e4"
+          }
+        },
+        {
+          "name": "reactionId",
+          "in": "path",
+          "description": "ID of the target reaction",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "679f3ddd44167687b51c34e4"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "reactions"
+        ],
+        "summary": "Get reaction by ID",
+        "description": "Returns a reaction matching the provided ID",
+        "operationId": "getReaction",
+        "responses": {
+          "200": {
+            "description": "A reaction object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reaction"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post or reaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "post": {
+                    "summary": "Post not found",
+                    "value": {
+                      "error": "No post found with given id."
+                    }
+                  },
+                  "reaction": {
+                    "summary": "Reaction not found",
+                    "value": {
+                      "error": "No reaction found with given id."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reactions"
+        ],
+        "summary": "Update reaction by ID",
+        "description": "Updates the reaction with the type from the request body",
+        "operationId": "putReaction",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The type to update the reaction to",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reaction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully edited reaction."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Reaction can only have type 'like' or 'dislike'."
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401NotLoggedIn"
+          },
+          "403": {
+            "description": "Not allowed to update reaction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to edit this reaction."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post or reaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "post": {
+                    "summary": "Post not found",
+                    "value": {
+                      "error": "No post found with given id."
+                    }
+                  },
+                  "reaction": {
+                    "summary": "Reaction not found",
+                    "value": {
+                      "error": "No reaction found with given id."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "reactions"
+        ],
+        "summary": "Delete reaction by ID",
+        "description": "Deletes the reaction with the matching ID",
+        "operationId": "deleteReaction",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "example": {
+                  "message": "Successfully deleted reaction."
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401NotLoggedIn"
+          },
+          "403": {
+            "description": "Not allowed to delete reaction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not authorized to delete this reaction."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post or reaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "post": {
+                    "summary": "Post not found",
+                    "value": {
+                      "error": "No post found with given id."
+                    }
+                  },
+                  "reaction": {
+                    "summary": "Reaction not found",
+                    "value": {
+                      "error": "No reaction found with given id."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500Unknown"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Post": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "readOnly": true,
+            "example": "679f3ddd44167687b51c34e4"
+          },
+          "text": {
+            "type": "string",
+            "example": "Hello this is my post!"
+          },
+          "thread": {
+            "type": "string",
+            "example": "679f3ddd44167687b51c34e4"
+          },
+          "postedBy": {
+            "type": "string",
+            "readOnly": true,
+            "default": "679f3ddd44167687b51c34e4"
+          },
+          "postedOn": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2025-02-04T13:57:07.831000"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "example": "2025-02-04T13:57:07.831000"
+          },
+          "reactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reaction"
+            }
+          }
+        }
+      },
+      "Reaction": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "readOnly": true,
+            "example": "679f3ddd44167687b51c34e4"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "like",
+              "dislike"
+            ]
+          },
+          "reactedBy": {
+            "type": "string",
+            "readOnly": true,
+            "example": "679f3ddd44167687b51c34e4"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "message text here"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "error message"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "200PostArray": {
+        "description": "A list of posts",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Post"
+              }
+            }
+          }
+        }
+      },
+      "401NotLoggedIn": {
+        "description": "Must be logged in",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "no-token": {
+                "summary": "Not logged in",
+                "value": {
+                  "error": "You must be logged in to perform this action."
+                }
+              },
+              "invalid-token": {
+                "summary": "Invalid token",
+                "value": {
+                  "error": "Invalid authentication token."
+                }
+              }
+            }
+          }
+        }
+      },
+      "404PostNotFound": {
+        "description": "Post not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "No post found with given id."
+            }
+          }
+        }
+      },
+      "500Unknown": {
+        "description": "Unknown error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}
