@@ -8,6 +8,11 @@ const port = process.env.PORT || 4000
 
 app.use(express.static("dist"));
 
+app.use("*", (req, res) => {
+    res.sendFile("dist/index.html")
+})
+
+
 app.listen(port, () => {
     console.log("serving on port " + port);
 });
