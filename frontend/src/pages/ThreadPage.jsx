@@ -63,7 +63,7 @@ function ThreadPage() {
             if (reaction.type == "like") likes++;
             else if (reaction.type == "dislike") dislikes++
 
-            if (reaction.reactedBy == user._id) {
+            if (user && reaction.reactedBy == user._id) {
                 userReactionId = reaction._id;
                 if (reaction.type == "like") userLiked = true;
                 else if (reaction.type == "dislike") userDisliked = true;
