@@ -62,6 +62,9 @@ router.get('/:id', verifyToken, async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+    if (process.env.REGISTRATION_DISABLED) {
+        return res.status(503).json({error: "Registration is currently disabled, contact the site administrator for more information."});
+    }
     try {
         const { username, email, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
