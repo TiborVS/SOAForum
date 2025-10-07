@@ -17,7 +17,9 @@ ARG PORT=4000
 EXPOSE $PORT
 
 RUN ["npm", "run", "build"]
+
 WORKDIR /app/server
+RUN npm ci
 
 ENV PORT=$PORT
 CMD ["npm", "run", "start"]

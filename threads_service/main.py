@@ -20,6 +20,15 @@ app = FastAPI(
     version="1.0"
 )
 
+origins = [
+    "http://localhost:3000",
+    "http://localhost:4000"
+]
+
+HOSTED_URL = environ.get("HOSTED_URL", False)
+if HOSTED_URL:
+    origins += [HOSTED_URL]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

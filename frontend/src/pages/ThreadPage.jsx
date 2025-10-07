@@ -81,6 +81,7 @@ function ThreadPage() {
         }
         if (!editing) {
             if (file) {
+                var fileOk = true;
                 if (file.type == "text/plain") {
                     var endpoint = "/text/"
                     var fileType = "text"
@@ -90,23 +91,27 @@ function ThreadPage() {
                     fileType = "image"
                 }
                 else {
-                    setError("Invalid file type!");
-                    return;
+                    fileOk = false;
                 }
-                const response = await fetch(import.meta.env.VITE_FILE_SERVICE_LOCATION + endpoint, {
+                if (fileOk) {
+                    const response = await fetch(import.meta.env.VITE_FILE_SERVICE_LOCATION + endpoint, {
                     method: "POST",
                     headers: {
                         "Authorization": "Bearer " + user.token
                     },
                     body: formData
-                })
-                if (!response.ok) {
-                    setError("Error uploading file.");
-                    return;
+                    })
+                    if (!response.ok) {
+                        setError("Error uploading file.");
+                        return;
+                    }
+                    var responseJson = await response.json();
+                    var fileId = responseJson.fileId;
+                    var data = { text: postText, thread: params.threadId, attachment: { name: file.name, id: fileId, fileType}};
                 }
-                var responseJson = await response.json();
-                var fileId = responseJson.fileId;
-                var data = { text: postText, thread: params.threadId, attachment: { name: file.name, id: fileId, fileType}};
+                else {
+                    data = { text: postText, thread: params.threadId }
+                }
             }
             else {
                 data = { text: postText, thread: params.threadId }

@@ -30,6 +30,7 @@ function LoginPage() {
                 },
                 body: JSON.stringify(data)
             });
+            
             const responseJson = await fetchResult.json();
             window.localStorage.setItem('token', responseJson.token); // not safe :(
             window.localStorage.setItem('user', JSON.stringify(responseJson.user));
