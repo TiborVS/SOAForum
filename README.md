@@ -1,5 +1,9 @@
 # Namestitev
 
+[Namestitev za razvoj](#namestitev-za-razvoj)
+
+[Namestitev z Dockerjem (hitreje)](#namestitev-z-dockerjem)
+
 ## Namestitev za razvoj
 
 Aplikacija je razvita in testirana z Node.js verzijo 22.X ter Python verzijo 3.12.X.
@@ -93,3 +97,46 @@ Nato poženemo čelni del v načinu za razvoj.
 ```bash
 npm run dev
 ```
+
+Do aplikacije dostopamo z naslovom http://localhost:5173.
+
+## Namestitev z Dockerjem
+
+Predpogoj je nameščen Docker Engine in razširitev Docker Compose (oboje je vključeno v namestitev Docker Desktop).
+
+### Podatkovna baza
+
+Mikrostoritve za podatkovno bazo uporabljajo MongoDB. Lahko gostujemo lastni strežnik MongoDB ali uporabimo MongoDB Atlas, oblačnega ponudnika.
+V vsakem primeru je potrebno za vsako storitev ustvariti lastno podatkovno bazo na strežniku in pridobiti niz (URL) za povezavo. Primer niza povezave je viden v navodilih za konfiguracijo okolja.
+
+### Konfiguracija okolja
+
+Docker Compose ob zagonu projekta posreduje okoljske spremenljivke iz petih datotek, ene skupne (`.env`) in štirih za posamezne storitve (`files.env`, `users.env`, ...).
+Vsaka konfiguracijska datoteka ima primer izgleda v datoteki s predpono example, torej npr. `example.env` in `example.files.env`.
+
+Primer izgleda konfiguracije `users.env`:
+```env
+MONGO_URI=mongodb+srv://username:password@host:port/databaseName?retryWrites=true&w=majority&appName=MyCluster
+JWT_SECRET=verysafesecret
+```
+
+Primer izgleda konfiguracije `.env`:
+```env
+FILE_SERVICE_LOCATION=http://files:3000
+USER_SERVICE_LOCATION=http://users:3000
+THREAD_SERVICE_LOCATION=http://threads:3000
+POST_SERVICE_LOCATION=http://posts:3000
+```
+_Opomba: Ker so Docker vsebniki združeni v skupno omrežje, jih lahko v tem omrežju naslavljamo z njihovim imenom, kot je definirano v `docker-compose.yml`.
+Ker ima vsak vsebnik svoj naslov, znotraj omrežja ni potrebe po različnih vratih, vse storitve lahko tečejo na vratih 3000._
+
+Projekt zaženemo z ukazom:
+```bash
+docker compose up
+```
+
+Do aplikacije dostopamo z naslovom http://localhost:4000.
+
+## Pomoč
+
+Ob morebitnih vprašanjih se obrnite na skrbnika projekta po Discordu. :)
