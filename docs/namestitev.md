@@ -136,7 +136,3 @@ docker compose up
 ```
 
 Do aplikacije dostopamo z naslovom http://localhost:4000.
-
-## Pomoč
-
-Ob morebitnih vprašanjih se obrnite na skrbnika projekta po Discordu. :)
