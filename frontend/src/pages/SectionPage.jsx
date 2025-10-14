@@ -179,7 +179,7 @@ function SectionPage() {
                         <tr>
                             <td colSpan="4"><hr /></td>
                         </tr>
-                        {threads.length > 1 &&
+                        {threads.length > 0 &&
                         <tr>
                             <th className="hometableheader">Thread</th>
                             <th className="hometableheader">Posted by</th>
