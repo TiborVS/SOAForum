@@ -4,7 +4,8 @@ Opomba: zaradi potrebe po vključitvi številskih vnosnih podatkov so testni pri
 
 
 - [T91 - Ocena objave](#t91---ocena-objave)
-
+- [T92 - Nastavitev starosti](#t92---nastavitev-starosti)
+- [T93 - Iskanje objav po mesecu in letu](#t93---iskanje-objav-po-mesecu-in-letu)
 
 ## T91 - Ocena objave
 
@@ -84,3 +85,43 @@ Opomba: zaradi potrebe po vključitvi številskih vnosnih podatkov so testni pri
 |2C/G/H/I|Klik na gumb "Posodobi" ob polju "starost".|Prikaže se opozorilo, da mora biti uporabnik star najmanj 13 let ter poziv, da si uporabnik v primeru mlajše starosti izbriše račun. Starost na profilu se ne spremeni.|
 |2D/J/K/L/M|Klik na gumb "Posodobi" ob polju "starost".|Starost na profilu se posodobi z novo vnešeno vrednostjo.|
 |2O/P|Klik na gumb "Posodobi" ob polju "starost".|Prikaže se opozorilo, da mora biti vnešeno celo število. Starost na profilu se ne spremeni.|
+
+[Nazaj](#testni-primeri)
+
+## T93 - Iskanje objav po mesecu in letu
+
+**Opis**: Uporabnik lahko brska med vsemi objavami na forumu, ki so bile objavljene v izbranem mesecu in letu.
+
+**Predpogoji**:
+- Odprta stran mesečnega arhiva
+
+**Vhodni podatki**:
+
+||Mesec|Leto|
+|---|---|---|
+|A|"" (prazno)|"" (prazno)
+|B|-3|1989| # ekvivalenčni razredi
+|C|6|2025|   # ekvivalenčni razredi
+|D|15|2800|  # ekvivalenčni razredi
+|E|0|2024| # analiza mejnih vrednosti (1 / 2025)
+|F|1|2025| # analiza mejnih vrednosti (1 / 2025)
+|G|2|2026| # analiza mejnih vrednosti (1 / 2025)
+|H|11|prejšnje leto|   # analiza mejnih vrednosti (12 / trenutno leto)
+|I|12|trenutno leto|   # analiza mejnih vrednosti (12 / trenutno leto)
+|J|13|naslednje leto|  # analiza mejnih vrednosti (12 / trenutno leto)
+|K|2.5|2025.1|
+|L|"abc"|"abc"|
+
+**Koraki in pričakovani rezultati**:
+
+|Korak #| Postopek | Pričakovan rezultat |
+|---|---|---|
+|1A|Izbris vsebine polj "mesec" in "leto".|Polji "mesec" in "leto" sta prazni.|
+|1B-L|Vnos vhodnih podatkov v polji "mesec" in "leto".|Polji "mesec" in "leto" prikazujeta vnešena podatka.|
+|2A|Klik na gumb "Išči".|Prikaže se opozorilo, da mesec in leto ne smeta biti prazna.|
+|2B/D/E/J|Klik na gumb "Išči".|Prikaže se opozorilo, da mesec ali leto nista veljavni vrednosti.|
+|2C/F/H/I|Klik na gumb "Išči".|Prikaže se izpis objav, ustvarjenih na izbran mesec in leto, ali sporočilo "V tem obdobju ni objav".|
+|2G|Klik na gumb "Išči".|Če je trenutno leto 2026 ali pozneje, se prikaže izpis objav, ustvarjenih na izbran mesec in leto, ali sporočilo "V tem obdobju ni objav". Drugače se prikaže opozorilo, da mesec ali leto nista veljavni vrednosti.|
+|2K/L|Klik na gumb "Išči".|Prikaže se opozorilo, da morata mesec in leto biti celi števili.|
+
+[Nazaj](#testni-primeri)
