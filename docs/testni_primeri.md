@@ -105,24 +105,24 @@
 ||Naslov razdelka|
 |---|---|
 |A|"" (prazno)|
-|B|"Potovanja"|
-|C|"Travel"|
+|B|"Fotografija"|
+|C|"Photography"|
 
 **Koraki in pričakovani rezultati**:
 
 |Korak #| Postopek | Pričakovan rezultat |
 |---|---|---|
 |1A|Klik na gumb "Create section".|Prikaže se sporočilo, da naslov ne more biti prazen.|
-|1B|Vnos naslova "Potovanja" v polje "title".|V polju "title" je viden vnešen naslov.|
-|2B|Klik na gumb "Create section".|Na dnu seznama razdelkov se pojavi nov razdelek z naslovom "Potovanja", uporabniškim imenom prijavljenega uporabnika, pravilnim datumom in uro ustvarjenja ter gumboma "Edit" in "Delete". Polje "title" v obrazcu za nov razdelek je prazno.|
-|3|Klik na gumb "Edit" zraven novo ustvarjenega razdelka.|V obrazcu za nov razdelek je v polju "title" viden naslov razdelka ("Potovanja"). Pod poljem je gumb, v katerem piše "Edit section".|
+|1B|Vnos naslova "Fotografija" v polje "title".|V polju "title" je viden vnešen naslov.|
+|2B|Klik na gumb "Create section".|Na dnu seznama razdelkov se pojavi nov razdelek z naslovom "Fotografija", uporabniškim imenom prijavljenega uporabnika, pravilnim datumom in uro ustvarjenja ter gumboma "Edit" in "Delete". Polje "title" v obrazcu za nov razdelek je prazno.|
+|3|Klik na gumb "Edit" zraven novo ustvarjenega razdelka.|V obrazcu za nov razdelek je v polju "title" viden naslov razdelka ("Fotografija"). Pod poljem je gumb, v katerem piše "Edit section".|
 |4A|Izbris vsebine polja "title".|Polje "title" je prazno.|
 |5A|Klik na gumb "Edit section".|Prikaže se sporočilo, da naslov ne more biti prazen. Naslov urejanega razdelka se ne spremeni.|
-|4B|Vnos naslova "Potovanja" v polje "title".|V polju "title" je viden vnešen naslov.|
-|5B|Klik na gumb "Edit section".|Polje "title" je prazno. Urejani razdelek ima še vedno naslov "Potovanja".|
-|4C|Klik na gumb "Edit" zraven razdelka "Potovanja".|V obrazcu za nov razdelek je v polju "title" viden naslov razdelka ("Potovanja"). Pod poljem je gumb, v katerem piše "Edit section".|
-|5C|Vnos naslova "Travel" v polje "title".|V polju "title" je viden vnešen naslov.|
-|6C|Klik na gumb "Edit section".|Polje "title" je prazno. Urejani razdelek ima naslov "Travel".|
+|4B|Vnos naslova "Fotografija" v polje "title".|V polju "title" je viden vnešen naslov.|
+|5B|Klik na gumb "Edit section".|Polje "title" je prazno. Urejani razdelek ima še vedno naslov "Fotografija".|
+|4C|Klik na gumb "Edit" zraven razdelka "Fotografija".|V obrazcu za nov razdelek je v polju "title" viden naslov razdelka ("Fotografija"). Pod poljem je gumb, v katerem piše "Edit section".|
+|5C|Vnos naslova "Photography" v polje "title".|V polju "title" je viden vnešen naslov.|
+|6C|Klik na gumb "Edit section".|Polje "title" je prazno. Urejani razdelek ima naslov "Photography".|
 |7|Klik na gumb "Delete" zraven urejenega razdelka.|Seznam razdelkov ne vsebuje izbrisanega razdelka.|
 |8|Pregled seznama razdelkov.|Razdelki, ki jih ni ustvaril trenutno prijavljen uporabnik, nimajo gumbov "Edit" in "Delete".|
 
