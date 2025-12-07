@@ -1,6 +1,4 @@
-import re
 import os
-from playwright.sync_api import Page, expect
 import pytest
 from dotenv import load_dotenv
 
@@ -19,9 +17,7 @@ def login(browser):
     context = browser.new_context()
     page = context.new_page()
     page.goto(SITE_ROOT + "/login")
-    page.get_by_role("textbox", name="E-mail").click()
     page.get_by_role("textbox", name="E-mail").fill(TEST_USER_EMAIL)
-    page.get_by_role("textbox", name="Password").click()
     page.get_by_role("textbox", name="Password").fill(TEST_USER_PASSWORD)
     page.get_by_role("button", name="Log in").click()
     page.wait_for_url(SITE_ROOT)
@@ -54,21 +50,3 @@ def second_user_section(browser):
 
     page.get_by_role("button", name="Delete").click()
     context.close()
-
-"""
-def test_has_title(page: Page):
-    page.goto(SITE_ROOT)
-
-    expect(page).to_have_title(re.compile("Yet Another Forum"))
-
-def test_logout_button_visible(user_logged_in):
-    page = user_logged_in.new_page()
-    page.goto(SITE_ROOT)
-
-    expect(page.get_by_role("button", name="Log out")).to_be_visible()
-
-def test_fixture_second_user_section(page, second_user_section):
-    page.goto(SITE_ROOT)
-    expect(page.get_by_text(re.compile("Test section"))).to_be_visible()
-    expect(page.get_by_text(re.compile("Test Two"))).to_be_visible()
-    """
