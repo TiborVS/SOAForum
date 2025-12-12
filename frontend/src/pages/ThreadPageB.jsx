@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from "react-router";
 import { formatDateFromDbString } from "../utils";
 import { UserContext } from "../Contexts";
 
-function ThreadPage() {
+function ThreadPageB() {
     const [posts, setPosts] = useState([]);
     const [thread, setThread] = useState(null);
 
@@ -211,6 +211,26 @@ function ThreadPage() {
                     }
                 </h3>
             </div>
+            {user && <>
+                <div id="threadcommentdiv">
+                    <form action={postSubmitHandler}>
+                        <textarea rows="5" cols="40" className="commenttextarea" name="text" id="text" placeholder="Your thoughts here..." value={postText} onChange={(e) => setPostText(e.target.value)}></textarea>
+                        <br/> 
+                        {!editing &&
+                            <input type="file" name="file" id="file" accept="text/plain,image/jpg,image/jpeg,image/png" />
+                        }
+                        <br/> <br/>
+                        <button id="commentbutton" type="submit">{editing ? "Edit" : "Post"}</button>
+                        {editing && <button onClick={() => {
+                            setEditing(false);
+                            setEditingId("");
+                            setPostText("");
+                        }}>Cancel</button>}
+                    </form>
+                    <p>{error}</p>
+                </div>
+                <hr/>
+            </>}
             <div id="threadtablediv">
                 <table id="threadtable">
                     <thead>
@@ -275,29 +295,9 @@ function ThreadPage() {
                         })}
                     </tbody>
                 </table>
-                <hr/>
             </div>
-            {user && <>
-                <div id="threadcommentdiv">
-                    <form action={postSubmitHandler}>
-                        <textarea rows="5" cols="40" className="commenttextarea" name="text" id="text" placeholder="Your thoughts here..." value={postText} onChange={(e) => setPostText(e.target.value)}></textarea>
-                        <br/> 
-                        {!editing &&
-                            <input type="file" name="file" id="file" accept="text/plain,image/jpg,image/jpeg,image/png" />
-                        }
-                        <br/> <br/>
-                        <button id="commentbutton" type="submit">{editing ? "Edit" : "Post"}</button>
-                        {editing && <button onClick={() => {
-                            setEditing(false);
-                            setEditingId("");
-                            setPostText("");
-                        }}>Cancel</button>}
-                    </form>
-                    <p>{error}</p>
-                </div>
-            </>}
         </>
     )
 }
 
-export default ThreadPage
+export default ThreadPageB
